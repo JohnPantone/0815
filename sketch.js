@@ -40,19 +40,32 @@ function initScreen() {
 }
 
 function writeMultilineTextAnimated(col, row, text) {
-  let currentCol = col;
-  let currentRow = row;
-
-  for (let i = 0; i < text.length && i < charIndex; i++) {
-    screen[currentRow][currentCol] = text[i];
-    currentCol++;
-    if (currentCol >= COLS) {
-      currentCol = 0;
-      currentRow++;
+    let currentCol = col;
+    let currentRow = row;
+    let writtenChars = 0;
+  
+    const words = text.match(/\S+\s*/g) || [];
+  
+    for (let word of words) {
+      if (writtenChars + word.length > charIndex) {
+        break; // Wort wäre unvollständig
+      }
+  
+      if (currentCol + word.length > COLS) {
+        currentRow++;
+        currentCol = 0;
+      }
+  
       if (currentRow >= ROWS) break;
+  
+      for (let i = 0; i < word.length; i++) {
+        screen[currentRow][currentCol] = word[i];
+        currentCol++;
+      }
+  
+      writtenChars += word.length;
     }
   }
-}
 
 function clearLines(fromRow, lineCount) {
   for (let i = 0; i < lineCount; i++) {
