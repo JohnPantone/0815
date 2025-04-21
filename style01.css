@@ -1,0 +1,28 @@
+/* Basis-Reset */
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:black; overflow:hidden; }
+
+/* Flex-Container für 30 Zeilen */
+.wall {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  height:100vh;
+  padding:1rem;
+  gap:0.3rem;
+}
+
+/* Jede Zeile */
+.line {
+  white-space:nowrap;
+  overflow:hidden;
+  padding-left:1rem;
+  font-size:clamp(14px,1.8vw,22px);
+}
+
+/* Cursor-Blink */
+.cursor {
+  display:inline;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink { 50%{opacity:0;} }
