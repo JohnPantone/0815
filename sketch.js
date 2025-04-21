@@ -38,7 +38,6 @@ function initScreen() {
     }
   }
 }
-
 function writeMultilineTextAnimated(col, row, text) {
     let currentCol = col;
     let currentRow = row;
@@ -67,15 +66,8 @@ function writeMultilineTextAnimated(col, row, text) {
     }
   }
 
-function clearLines(fromRow, lineCount) {
-  for (let i = 0; i < lineCount; i++) {
-    if (fromRow + i < ROWS) {
-      for (let x = 0; x < COLS; x++) {
-        screen[fromRow + i][x] = " ";
-      }
-    }
-  }
-}
+  clearLine(displayRow);
+  writeSingleLineAnimated(0, displayRow, newsList[newsIndex]);
 
 function drawScreen() {
   background(0);
