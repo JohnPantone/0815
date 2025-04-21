@@ -23,71 +23,52 @@ function setup() {
   noStroke();
 
   initScreen();
-  fetchNewsHeadlines(); // erste Ladung
+  fetchNewsHeadlines();
   setInterval(fetchNewsHeadlines, 600000); // alle 10 Minuten
 }
- 
+
 // -----------------------------
 // BILDSCHIRM-FUNKTIONEN
 // -----------------------------
 function initScreen() {
-  for (let y = 0; y < ROWS; y++) {
-    screen[y] = [];
+    for (let y = 0; y < ROWS; y++) {
+      screen[y] = [];
+      for (let x = 0; x < COLS; x++) {
+        screen[y][x] = " ";
+      }
+    }
+  }
+  
+  function clearLine(row) {
     for (let x = 0; x < COLS; x++) {
-      screen[y][x] = " ";
+      screen[row][x] = " ";
     }
   }
-}
-function writeMultilineTextAnimated(col, row, text) {
-    let currentCol = col;
-    let currentRow = row;
-    let writtenChars = 0;
   
-    const words = text.match(/\S+\s*/g) || [];
+  function writeSingleLineAnimated(col, row, text) {
+    let visibleText = text.slice(0, charIndex).slice(0, COLS);
+    for (let i = 0; i < COLS; i++) {
+      screen[row][i] = visibleText[i] || " ";
+    }
+  }
   
-    for (let word of words) {
-      if (writtenChars + word.length > charIndex) {
-        break; // Wort wäre unvollständig
-      }
-  
-      if (currentCol + word.length > COLS) {
-        currentRow++;
-        currentCol = 0;
-      }
-  
-      if (currentRow >= ROWS) break;
-  
-      for (let i = 0; i < word.length; i++) {
-        screen[currentRow][currentCol] = word[i];
-        currentCol++;
-      }
-  
-      writtenChars += word.length;
+  function drawScreen() {
+    background(0);
+    for (let y = 0; y < ROWS; y++) {
+      let line = screen[y].join('');
+      text(line, 5, (y + 1) * CHAR_SIZE * 1.1);
     }
   }
 
-  clearLine(displayRow);
-  writeSingleLineAnimated(0, displayRow, newsList[newsIndex]);
-
-function drawScreen() {
-  background(0);
-  for (let y = 0; y < ROWS; y++) {
-    let line = screen[y].join('');
-    text(line, 5, (y + 1) * CHAR_SIZE * 1.1);
-  }
-}
-
-// -----------------------------
+  // -----------------------------
 // NACHRICHTEN-TICKER
 // -----------------------------
 let newsList = ["Nachrichten werden geladen..."];
 let newsIndex = 0;
-let currentText = "";
 let displayRow = 12;
-
-let state = "typing"; // "typing", "pause", "clearing"
 let charIndex = 0;
 let frameCounter = 0;
+let state = "typing"; // "typing", "pause", "clearing"
 
 function draw() {
   drawScreen();
@@ -97,8 +78,7 @@ function draw() {
   if (state === "typing" && frameCounter % 2 === 0) {
     if (charIndex < newsList[newsIndex].length) {
       charIndex++;
-      clearLines(displayRow, 3);
-      writeMultilineTextAnimated(0, displayRow, newsList[newsIndex]);
+      writeSingleLineAnimated(0, displayRow, newsList[newsIndex]);
     } else {
       state = "pause";
       frameCounter = 0;
@@ -113,11 +93,9 @@ function draw() {
   else if (state === "clearing" && frameCounter % 1 === 0) {
     if (charIndex > 0) {
       charIndex--;
-      clearLines(displayRow, 3);
-      writeMultilineTextAnimated(0, displayRow, newsList[newsIndex]);
+      writeSingleLineAnimated(0, displayRow, newsList[newsIndex]);
     } else {
       newsIndex = (newsIndex + 1) % newsList.length;
-      currentText = "";
       state = "typing";
       frameCounter = 0;
     }
@@ -128,20 +106,20 @@ function draw() {
 // RSS-NACHRICHTEN LADEN (ORF)
 // -----------------------------
 async function fetchNewsHeadlines() {
-  const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://rss.orf.at/news.xml';
-
-  try {
-    const response = await fetch(rssUrl);
-    const data = await response.json();
-
-    if (!data.items || data.items.length === 0) {
-      throw new Error("Keine Artikel gefunden.");
+    const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://rss.orf.at/news.xml';
+  
+    try {
+      const response = await fetch(rssUrl);
+      const data = await response.json();
+  
+      if (!data.items || data.items.length === 0) {
+        throw new Error("Keine Artikel gefunden.");
+      }
+  
+      newsList = data.items.map(item => item.title);
+      newsIndex = 0;
+    } catch (error) {
+      console.error('Fehler beim Laden der RSS-Nachrichten:', error);
+      newsList = ["Fehler beim Laden der Nachrichten."];
     }
-
-    newsList = data.items.map(item => item.title);
-    newsIndex = 0;
-  } catch (error) {
-    console.error('Fehler beim Laden der RSS-Nachrichten:', error);
-    newsList = ["Fehler beim Laden der Nachrichten."];
   }
-}
