@@ -27,7 +27,7 @@ function draw() {
   let x = (width - textWidthNow) / 2;
   text(typedText, x, y);
 
-
+  text("▌", x + textWidth(typedText), y);
 
   }
 
