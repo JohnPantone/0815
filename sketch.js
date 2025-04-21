@@ -47,6 +47,7 @@ function draw() {
       nextMessage();
     }
   }
+  console.log("📺:", { currentText, typedText });
 }
 
 function nextMessage() {
