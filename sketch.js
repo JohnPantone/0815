@@ -7,7 +7,7 @@ let displayDuration = 180; // ca. 3 Sekunden Pause
 let currentText = "";
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(1200, 600);
   textFont("Courier New");
   textSize(24);
   fill(0, 255, 0);
