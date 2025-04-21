@@ -1,57 +1,70 @@
-let newsList = ["Nachrichten werden geladen..."];
+let newsList = ["Nachricht wird geladen..."];
 let newsIndex = 0;
-let timer = 0;
-let displayDuration = 5 * 60; // 5 Sekunden bei 60 fps
+let charIndex = 0;
+let frameCounter = 0;
+let state = "typing"; // oder "pause", "next"
+let displayText = "";
+let displayDuration = 180; // 3 Sekunden Pause nach vollständiger Nachricht
 
 function setup() {
   createCanvas(800, 600);
-  background(0);
   textFont("Courier New");
-  textAlign(CENTER, CENTER);
+  textSize(24);
   fill(0, 255, 0);
-  fetchNewsHeadlines();
-  setInterval(fetchNewsHeadlines, 600000); // alle 10 Minuten
+  noStroke();
+  background(0);
+  frameRate(30);
+  fetchNews();
 }
 
 function draw() {
   background(0);
 
   let headline = newsList[newsIndex];
-  let size = getFittingTextSize(headline);
-  textSize(size);
-  text(headline, width / 2, height / 2);
+  let typedText = headline.slice(0, charIndex);
 
-  timer++;
-  if (timer > displayDuration) {
-    timer = 0;
+  textAlign(CENTER, CENTER);
+  text(typedText, width / 2, height / 2);
+
+  frameCounter++;
+
+  if (state === "typing") {
+    if (frameCounter % 2 === 0 && charIndex < headline.length) {
+      charIndex++;
+    } else if (charIndex >= headline.length) {
+      state = "pause";
+      frameCounter = 0;
+    }
+  }
+
+  else if (state === "pause") {
+    if (frameCounter > displayDuration) {
+      state = "next";
+      frameCounter = 0;
+    }
+  }
+
+  else if (state === "next") {
     newsIndex = (newsIndex + 1) % newsList.length;
+    charIndex = 0;
+    state = "typing";
+    frameCounter = 0;
   }
 }
 
-function getFittingTextSize(text) {
-  let size = 48;
-  while (textWidth(text) > width - 40 && size > 10) {
-    size--;
-    textSize(size);
-  }
-  return size;
-}
-
-async function fetchNewsHeadlines() {
-  const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://rss.orf.at/news.xml';
+async function fetchNews() {
+  const url = 'https://api.rss2json.com/v1/api.json?rss_url=https://rss.orf.at/news.xml';
 
   try {
-    const response = await fetch(rssUrl);
-    const data = await response.json();
-
-    if (!data.items || data.items.length === 0) {
-      throw new Error("Keine Artikel gefunden.");
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.items && data.items.length > 0) {
+      newsList = data.items.map(item => item.title);
+    } else {
+      newsList = ["Keine Nachrichten gefunden."];
     }
-
-    newsList = data.items.map(item => item.title);
-    newsIndex = 0;
-  } catch (error) {
-    console.error('Fehler beim Laden der RSS-Nachrichten:', error);
+  } catch (err) {
+    console.error("Fehler beim Laden der Nachrichten:", err);
     newsList = ["Fehler beim Laden der Nachrichten."];
   }
 }
