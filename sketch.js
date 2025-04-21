@@ -3,35 +3,39 @@ let newsIndex = 0;
 let charIndex = 0;
 let frameCounter = 0;
 let state = "typing"; // oder "pause", "next"
-let displayText = "";
-let displayDuration = 180; // 3 Sekunden Pause nach vollständiger Nachricht
+let displayDuration = 180; // ca. 3 Sekunden Pause
+let currentText = "";
 
 function setup() {
   createCanvas(800, 600);
   textFont("Courier New");
   textSize(24);
   fill(0, 255, 0);
+  frameRate(30);
+  textAlign(LEFT, CENTER);
   noStroke();
   background(0);
-  frameRate(30);
   fetchNews();
+  currentText = newsList[newsIndex];
 }
 
 function draw() {
   background(0);
 
-  let headline = newsList[newsIndex];
-  let typedText = headline.slice(0, charIndex);
+  // Position: zentriert horizontal durch Berechnung der Textbreite
+  let visibleText = currentText.slice(0, charIndex);
+  let textWidthNow = textWidth(visibleText);
+  let x = (width - textWidthNow) / 2;
+  let y = height / 2;
 
-  textAlign(CENTER, CENTER);
-  text(typedText, width / 2, height / 2);
+  text(visibleText, x, y);
 
   frameCounter++;
 
-  if (state === "typing") {
-    if (frameCounter % 2 === 0 && charIndex < headline.length) {
+  if (state === "typing" && frameCounter % 2 === 0) {
+    if (charIndex < currentText.length) {
       charIndex++;
-    } else if (charIndex >= headline.length) {
+    } else {
       state = "pause";
       frameCounter = 0;
     }
@@ -46,6 +50,7 @@ function draw() {
 
   else if (state === "next") {
     newsIndex = (newsIndex + 1) % newsList.length;
+    currentText = newsList[newsIndex];
     charIndex = 0;
     state = "typing";
     frameCounter = 0;
@@ -60,6 +65,7 @@ async function fetchNews() {
     const data = await res.json();
     if (data.items && data.items.length > 0) {
       newsList = data.items.map(item => item.title);
+      currentText = newsList[0];
     } else {
       newsList = ["Keine Nachrichten gefunden."];
     }
