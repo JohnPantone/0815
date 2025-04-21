@@ -42,16 +42,16 @@ function draw() {
     text("▌", x1 + textWidth(typedText1), y1);
   }
 
-  // Zeile 2 – elegant, edle Schrift
-  textFont("DM Serif Display");
-  textSize(22);
-  fill(255, 220, 100);
-  let y2 = height / 2 + 40;
-  let x2 = (width - textWidth(typedText2)) / 2;
-  text(typedText2, x2, y2);
-  if (cursorVisible && state2 === "typing") {
-    text("▌", x2 + textWidth(typedText2), y2);
-  }
+ // Zeile 2 – moderne Gothic-Schrift
+textFont("League Gothic");
+textSize(22);
+fill(255, 220, 100);
+let y2 = height / 2 + 40;
+let x2 = (width - textWidth(typedText2)) / 2;
+text(typedText2, x2, y2);
+if (cursorVisible && state2 === "typing") {
+  text("▌", x2 + textWidth(typedText2), y2);
+}
 
   // Cursor-Blink
   if (frameCount % 30 === 0) {
