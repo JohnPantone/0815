@@ -55,57 +55,11 @@ function initScreen() {
     background(0);
     for (let y = 0; y < ROWS; y++) {
       let line = screen[y].join('');
-      text(line, 5, (y + 1) * CHAR_SIZE * 1.1);// -----------------------------
-// NACHRICHTEN-TICKER
-// -----------------------------
-let newsList = ["Nachrichten werden geladen..."];
-let newsIndex = 0;
-let currentText = "";
-let displayRow = 12;
-
-let state = "typing"; // "typing", "pause", "clearing"
-let charIndex = 0;
-let frameCounter = 0;
-
-function draw() {
-  drawScreen();
-
-  frameCounter++;
-
-  if (state === "typing" && frameCounter % 2 === 0) {
-    if (charIndex < newsList[newsIndex].length) {
-      currentText += newsList[newsIndex][charIndex];
-      charIndex++;
-      clearLine(displayRow);
-      writeText(0, displayRow, currentText);
-    } else {
-      state = "pause";
-      frameCounter = 0;
+      text(line, 5, (y + 1) * CHAR_SIZE * 1.1);
     }
   }
 
-  else if (state === "pause" && frameCounter > 90) {
-    state = "clearing";
-    frameCounter = 0;
-  }
-
-  else if (state === "clearing" && frameCounter % 1 === 0) {
-    if (currentText.length > 0) {
-      currentText = currentText.slice(0, -1);
-      clearLine(displayRow);
-      writeText(0, displayRow, currentText);
-    } else {
-      newsIndex = (newsIndex + 1) % newsList.length;
-      charIndex = 0;
-      currentText = "";
-      state = "typing";
-      frameCounter = 0;
-    }
-  }
-}
-    }
-  }
-// -----------------------------
+  // -----------------------------
 // NACHRICHTEN-TICKER
 // -----------------------------
 let newsList = ["Nachrichten werden geladen..."];
