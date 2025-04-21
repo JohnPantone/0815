@@ -65,7 +65,7 @@ async function fetchNews() {
 
     if (data.items && data.items.length > 0) {
       newsList = data.items.map(item => item.title);     // Nur die Titel extrahieren
-      allText = newsList.join("  //  ");                 // Alle Nachrichten aneinanderreihen mit Trenner – HIER ÄNDERN
+      currentText = newsList[0];            // Alle Nachrichten  – HIER ÄNDERN
     } else {
       allText = "Keine Nachrichten gefunden.";
     }
