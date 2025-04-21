@@ -1,79 +1,56 @@
-const COLS = 40;
-const ROWS = 25;
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 600;
-
-let CHAR_SIZE;
-let screen = [];
-let newsList = ["Nachrichten werden geladen..."];
+let newsList = ["Lade Nachrichten ..."];
 let newsIndex = 0;
-let displayRow = 12;
-
-let scrollPos = 0;
+let currentText = "";
+let charIndex = 0;
+let state = "typing";
 let frameCounter = 0;
 
 function setup() {
-  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  const charWidth = CANVAS_WIDTH / COLS;
-  const charHeight = CANVAS_HEIGHT / ROWS;
-  CHAR_SIZE = Math.min(charWidth / 0.6, charHeight / 1.2);
-
-  textFont('Courier New');
-  textSize(CHAR_SIZE);
-  fill(0, 255, 0);
-  noStroke();
+  createCanvas(800, 600);
   background(0);
-
-  initScreen();
+  textFont("Courier New");
+  textAlign(LEFT, CENTER);
+  fill(0, 255, 0);
   fetchNewsHeadlines();
   setInterval(fetchNewsHeadlines, 600000); // alle 10 Minuten
 }
 
-function initScreen() {
-  for (let y = 0; y < ROWS; y++) {
-    screen[y] = [];
-    for (let x = 0; x < COLS; x++) {
-      screen[y][x] = " ";
-    }
-  }
-}
-
-function clearLine(row) {
-  for (let x = 0; x < COLS; x++) {
-    screen[row][x] = " ";
-  }
-}
-
-function writeScrollLine(col, row, fullText, offset) {
-  let view = fullText.padEnd(fullText.length + COLS, " ").slice(offset, offset + COLS);
-  for (let i = 0; i < COLS; i++) {
-    screen[row][i] = view[i] || " ";
-  }
-}
-
-function drawScreen() {
-  background(0);
-  for (let y = 0; y < ROWS; y++) {
-    let line = screen[y].join('');
-    text(line, 5, (y + 1) * CHAR_SIZE * 1.1);
-  }
-}
-
 function draw() {
-  drawScreen();
+  background(0);
+  textSize(getFittingTextSize(currentText.slice(0, charIndex)));
+
+  text(currentText.slice(0, charIndex), 30, height / 2);
 
   frameCounter++;
-  if (frameCounter % 3 === 0) {
-    let currentText = newsList[newsIndex];
-
-    writeScrollLine(0, displayRow, currentText, scrollPos);
-    scrollPos++;
-
-    if (scrollPos > currentText.length + COLS) {
-      scrollPos = 0;
+  if (state === "typing" && frameCounter % 2 === 0) {
+    if (charIndex < currentText.length) {
+      charIndex++;
+    } else {
+      state = "pause";
+      frameCounter = 0;
+    }
+  } else if (state === "pause" && frameCounter > 90) {
+    state = "clearing";
+    frameCounter = 0;
+  } else if (state === "clearing" && frameCounter % 1 === 0) {
+    if (charIndex > 0) {
+      charIndex--;
+    } else {
       newsIndex = (newsIndex + 1) % newsList.length;
+      currentText = newsList[newsIndex];
+      state = "typing";
+      frameCounter = 0;
     }
   }
+}
+
+function getFittingTextSize(text) {
+  let size = 48;
+  while (textWidth(text) > width - 60 && size > 10) {
+    size -= 1;
+    textSize(size);
+  }
+  return size;
 }
 
 async function fetchNewsHeadlines() {
@@ -89,8 +66,10 @@ async function fetchNewsHeadlines() {
 
     newsList = data.items.map(item => item.title);
     newsIndex = 0;
+    currentText = newsList[newsIndex];
   } catch (error) {
     console.error('Fehler beim Laden der RSS-Nachrichten:', error);
     newsList = ["Fehler beim Laden der Nachrichten."];
+    currentText = newsList[0];
   }
 }
