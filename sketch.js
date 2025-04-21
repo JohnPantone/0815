@@ -1,7 +1,7 @@
 // -----------------------------
 // GRUNDEINSTELLUNG
 // -----------------------------
-const COLS = 40;
+const COLS = 100;
 const ROWS = 25;
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
@@ -130,4 +130,3 @@ async function fetchNewsHeadlines() {
     }
   }
 
-  
