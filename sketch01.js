@@ -31,7 +31,7 @@ function setup() {
 function draw() {
   background(0);
 
-  // Feed 1: links nach rechts, oben
+  // Feed 1: links → rechts (oben)
   textFont("Courier New");
   textSize(24);
   fill(0, 255, 0);
@@ -42,12 +42,13 @@ function draw() {
     text("▌", x1 + textWidth(typedText1), y1);
   }
 
-  // Feed 2: rechts nach links, unten
+  // Feed 2: rechts → links (unten)
   textFont("Georgia");
   textSize(20);
   fill(255, 255, 0);
   let y2 = height / 2 + 40;
-  let x2 = (width + textWidth(typedText2)) / 2;
+  let textWidth2 = textWidth(typedText2);
+  let x2 = width - 20 - textWidth2;
   text(typedText2, x2, y2);
   if (cursorVisible && state2 === "typing") {
     text("▐", x2 - textWidth("▐"), y2);
@@ -58,7 +59,7 @@ function draw() {
     cursorVisible = !cursorVisible;
   }
 
-  // Tipp-Effekt Feed 1
+  // Tippe Feed 1
   if (state1 === "typing" && frameCount % 2 === 0) {
     if (charIndex1 < currentText1.length) {
       typedText1 += currentText1[charIndex1];
@@ -68,10 +69,10 @@ function draw() {
     }
   }
 
-  // Tipp-Effekt Feed 2 (rückwärts)
+  // Tippe Feed 2
   if (state2 === "typing" && frameCount % 2 === 0) {
     if (charIndex2 < currentText2.length) {
-      typedText2 = currentText2.slice(currentText2.length - charIndex2 - 1) + typedText2;
+      typedText2 += currentText2[charIndex2];
       charIndex2++;
     } else if (frameCounter2++ > 90) {
       next2();
