@@ -4,8 +4,9 @@ let newsList = ["Nachrichten werden geladen..."];
 // Zusammengesetzter Text aus allen Nachrichten – hieraus wird getippt
 let allText = "";
 
-// Aktuelle Position im allText (welcher Buchstabe gerade geschrieben wird)
-let currentIndex = 0;
+let currentText = "";      // aktuelle Nachricht
+let typedText = "";        // Zeichen für Zeichen aufgebaut
+let newsIndex = 0;         // aktuelle Position in newsList
 
 // Position auf der x-Achse (linker Rand), aktuell fest auf 20px
 let xPos = 20;
