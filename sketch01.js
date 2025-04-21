@@ -31,7 +31,7 @@ function setup() {
 function draw() {
   background(0);
 
-  // Feed 1 – oben
+  // Zeile 1 – klassisch VC20
   textFont("Courier New");
   textSize(24);
   fill(0, 255, 0);
@@ -42,10 +42,10 @@ function draw() {
     text("▌", x1 + textWidth(typedText1), y1);
   }
 
-  // Feed 2 – unten
-  textFont("Georgia");
-  textSize(20);
-  fill(255, 255, 0);
+  // Zeile 2 – elegant, edle Schrift
+  textFont("DM Serif Display");
+  textSize(22);
+  fill(255, 220, 100);
   let y2 = height / 2 + 40;
   let x2 = (width - textWidth(typedText2)) / 2;
   text(typedText2, x2, y2);
@@ -68,7 +68,7 @@ function draw() {
     }
   }
 
-  // Tippe Feed 2 – **gleiche Logik**
+  // Tippe Feed 2
   if (state2 === "typing" && frameCount % 2 === 0) {
     if (charIndex2 < currentText2.length) {
       typedText2 += currentText2[charIndex2];
