@@ -31,30 +31,30 @@ function setup() {
   fetchNews();                            // RSS-Nachrichten laden
 }
 
-function draw() {
-  background(0); // Bildschirm jedes Mal schwarz löschen
+background(0);
 
-  // Den aktuellen Text mittig auf der Y-Achse anzeigen (eine Zeile)
-  text(typedText, xPos, height / 2);
+text(typedText, xPos, height / 2);
 
-  // Blinkenden Cursor ▌ zeichnen, wenn er sichtbar sein soll
-  if (cursorVisible) {
-    let tw = textWidth(typedText);             // Breite des bisherigen Texts
-    text("▌", xPos + tw, height / 2);          // Cursor direkt ans Textende setzen
+// Blinkender Cursor
+if (cursorVisible) {
+  let tw = textWidth(typedText);
+  text("▌", xPos + tw, height / 2);
+}
+
+frameCounter++;
+
+// Cursor blinkt alle 30 Frames
+if (frameCounter % 30 === 0) {
+  cursorVisible = !cursorVisible;
+}
+
+// Zeichenweise aufbauen
+if (frameCounter % 2 === 0) {
+  if (typedText.length < currentText.length) {
+    typedText += currentText[typedText.length];
+  } else if (frameCounter > 100) { // Pause nach vollständigem Satz
+    nextMessage();
   }
-
-  // Schreibmaschinen-Effekt: alle 2 Frames einen neuen Buchstaben
-  if (frameCounter % 2 === 0 && currentIndex < allText.length) {
-    typedText += allText[currentIndex];        // nächsten Buchstaben hinzufügen
-    currentIndex++;
-  }
-
-  // Cursor blinken lassen (alle 30 Frames umschalten)
-  if (frameCounter % 30 === 0) {
-    cursorVisible = !cursorVisible;
-  }
-
-  frameCounter++;
 }
 
 async function fetchNews() {
