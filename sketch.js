@@ -1,7 +1,7 @@
 // -----------------------------
 // GRUNDEINSTELLUNG
 // -----------------------------
-const COLS = 40;
+const COLS = 80;
 const ROWS = 25;
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 600;
