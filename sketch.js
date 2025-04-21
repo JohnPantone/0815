@@ -10,10 +10,10 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   background(0);
   textFont("Courier New");
-  textSize(32);
+  textSize(20);
   fill(0, 255, 0);
   noStroke();
-  frameRate(30);
+  frameRate(25);
   fetchNews();
 }
 
