@@ -33,7 +33,7 @@ function draw() {
 
   // Zeile 1 – klassisch VC20
   textFont("Courier New");
-  textSize(24);
+  textSize(44);
   fill(0, 255, 0);
   let y1 = height / 2 - 40;
   let x1 = (width - textWidth(typedText1)) / 2;
@@ -44,10 +44,10 @@ function draw() {
 
  // Zeile 2 – moderne Gothic-Schrift
 textFont("League Gothic");
-textSize(22);
+textSize(44);
 fill(255, 220, 100);
-let y2 = height / 2 + 40;
-let x2 = (width - textWidth(typedText2)) / 2;
+let y2 = height / 2 + 60;
+let x2 = (width - textWidth(typedText2)) / 6;
 text(typedText2, x2, y2);
 if (cursorVisible && state2 === "typing") {
   text("▌", x2 + textWidth(typedText2), y2);
