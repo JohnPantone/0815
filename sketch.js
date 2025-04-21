@@ -1,15 +1,13 @@
-let newsList = ["Lade Nachrichten ..."];
+let newsList = ["Nachrichten werden geladen..."];
 let newsIndex = 0;
-let currentText = "";
-let charIndex = 0;
-let state = "typing";
-let frameCounter = 0;
+let timer = 0;
+let displayDuration = 5 * 60; // 5 Sekunden bei 60 fps
 
 function setup() {
   createCanvas(800, 600);
   background(0);
   textFont("Courier New");
-  textAlign(LEFT, CENTER);
+  textAlign(CENTER, CENTER);
   fill(0, 255, 0);
   fetchNewsHeadlines();
   setInterval(fetchNewsHeadlines, 600000); // alle 10 Minuten
@@ -17,37 +15,23 @@ function setup() {
 
 function draw() {
   background(0);
-  textSize(getFittingTextSize(currentText.slice(0, charIndex)));
 
-  text(currentText.slice(0, charIndex), 30, height / 2);
+  let headline = newsList[newsIndex];
+  let size = getFittingTextSize(headline);
+  textSize(size);
+  text(headline, width / 2, height / 2);
 
-  frameCounter++;
-  if (state === "typing" && frameCounter % 2 === 0) {
-    if (charIndex < currentText.length) {
-      charIndex++;
-    } else {
-      state = "pause";
-      frameCounter = 0;
-    }
-  } else if (state === "pause" && frameCounter > 90) {
-    state = "clearing";
-    frameCounter = 0;
-  } else if (state === "clearing" && frameCounter % 1 === 0) {
-    if (charIndex > 0) {
-      charIndex--;
-    } else {
-      newsIndex = (newsIndex + 1) % newsList.length;
-      currentText = newsList[newsIndex];
-      state = "typing";
-      frameCounter = 0;
-    }
+  timer++;
+  if (timer > displayDuration) {
+    timer = 0;
+    newsIndex = (newsIndex + 1) % newsList.length;
   }
 }
 
 function getFittingTextSize(text) {
   let size = 48;
-  while (textWidth(text) > width - 60 && size > 10) {
-    size -= 1;
+  while (textWidth(text) > width - 40 && size > 10) {
+    size--;
     textSize(size);
   }
   return size;
@@ -66,10 +50,8 @@ async function fetchNewsHeadlines() {
 
     newsList = data.items.map(item => item.title);
     newsIndex = 0;
-    currentText = newsList[newsIndex];
   } catch (error) {
     console.error('Fehler beim Laden der RSS-Nachrichten:', error);
     newsList = ["Fehler beim Laden der Nachrichten."];
-    currentText = newsList[0];
   }
 }
