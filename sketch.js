@@ -1,7 +1,7 @@
 let newsList = ["Nachrichten werden geladen..."];
 let allText = "";             // gesamter Text als Ticker
 let currentIndex = 0;         // aktueller Buchstabe
-let xPos = 20;                // Startposition
+let xPos = 00;                // Startposition
 let typedText = "";
 let frameCounter = 0;
 let cursorVisible = true;
