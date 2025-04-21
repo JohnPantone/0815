@@ -1,3 +1,4 @@
+
 let newsList = ["Nachricht wird geladen..."];
 let currentText = "";
 let typedText = "";
@@ -21,14 +22,14 @@ function setup() {
 function draw() {
   background(0);
 
-
   let y = height / 2;
   let textWidthNow = textWidth(typedText);
   let x = (width - textWidthNow) / 2;
+
   text(typedText, x, y);
 
-  text("▌", x + textWidth(typedText), y);
-
+  if (cursorVisible && state === "typing") {
+    text("▌", x + textWidthNow, y);
   }
 
   frameCounter++;
