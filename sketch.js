@@ -1,82 +1,83 @@
-// Liste der geladenen Nachrichten (wird von fetchNews befüllt)
-let newsList = ["Nachrichten werden geladen..."];
-
-// Zusammengesetzter Text aus allen Nachrichten – hieraus wird getippt
-let allText = "";
-
-let currentText = "";      // aktuelle Nachricht
-let typedText = "";        // Zeichen für Zeichen aufgebaut
-let newsIndex = 0;         // aktuelle Position in newsList
-
-// Position auf der x-Achse (linker Rand), aktuell fest auf 20px
-let xPos = 20;
-
-// Der bisher getippte Text (Zeichen für Zeichen zusammengesetzt)
-let typedText = "";
-
-// Zähler für Timing (Cursor-Blinken, Schreibgeschwindigkeit)
-let frameCounter = 0;
-
-// Sichtbarkeit des Cursors (für Blinken ein/aus)
-let cursorVisible = true;
+let newsList = ["Nachrichten werden geladen..."]; // Initialtext
+let currentText = "";       // aktuell angezeigte Nachricht
+let typedText = "";         // aktueller Tippprozess
+let newsIndex = 0;          // Index in der Nachrichtenliste
+let frameCounter = 0;       // für Timing und Animation
+let cursorVisible = true;   // blinkender Cursor
 
 function setup() {
-  createCanvas(windowWidth, windowHeight); // Canvas auf gesamte Fenstergröße
-  background(0);                           // Schwarzer Hintergrund (VC-20 Stil)
-  textFont("Courier New");                // Monospace-Schrift (typisch Retro)
-  textSize(20);                           // Schriftgröße – HIER ÄNDERN
-  fill(0, 255, 0);                         // Grün wie beim VC-20 – HIER ÄNDERN
-  noStroke();                             
-  frameRate(25);                          // Bildwiederholrate – HIER ÄNDERN (z. B. 30 für flüssiger)
-  fetchNews();                            // RSS-Nachrichten laden
+  createCanvas(windowWidth, windowHeight);      // voller Bildschirm
+  background(0);                                // schwarzer Hintergrund
+  textFont("Courier New");                      // Retro-Schriftart
+  textSize(20);                                 // HIER: Schriftgröße ändern
+  fill(0, 255, 0);                               // grün wie VC-20
+  noStroke();
+  frameRate(30);                                // Bildrate
+  fetchNews();                                  // RSS abrufen
 }
 
-background(0);
+function draw() {
+  background(0); // Bildschirm löschen
 
-text(typedText, xPos, height / 2);
+  let x = 20;                  // linker Rand
+  let y = height / 2;          // mittig vertikal
 
-// Blinkender Cursor
-if (cursorVisible) {
-  let tw = textWidth(typedText);
-  text("▌", xPos + tw, height / 2);
-}
+  text(typedText, x, y);       // aktuellen Text anzeigen
 
-frameCounter++;
+  if (cursorVisible) {
+    let tw = textWidth(typedText);
+    text("▌", x + tw, y);      // blinkender Cursor direkt danach
+  }
 
-// Cursor blinkt alle 30 Frames
-if (frameCounter % 30 === 0) {
-  cursorVisible = !cursorVisible;
-}
+  frameCounter++;
 
-// Zeichenweise aufbauen
-if (frameCounter % 2 === 0) {
-  if (typedText.length < currentText.length) {
-    typedText += currentText[typedText.length];
-  } else if (frameCounter > 100) { // Pause nach vollständigem Satz
-    nextMessage();
+  // Cursor blinkt alle 30 Frames (ca. 1 Sekunde)
+  if (frameCounter % 30 === 0) {
+    cursorVisible = !cursorVisible;
+  }
+
+  // Tippe Zeichen für Zeichen (alle 2 Frames)
+  if (frameCounter % 2 === 0) {
+    if (typedText.length < currentText.length) {
+      typedText += currentText[typedText.length];
+    }
+    // Wenn komplett getippt → warte, dann nächste Nachricht
+    else if (frameCounter > 100) {
+      nextMessage();
+    }
   }
 }
 
+function nextMessage() {
+  frameCounter = 0;
+  newsIndex = (newsIndex + 1) % newsList.length;
+  currentText = newsList[newsIndex];
+  typedText = "";
+  cursorVisible = true;
+}
+
+// RSS-Feed laden
 async function fetchNews() {
   const url = 'https://api.rss2json.com/v1/api.json?rss_url=https://rss.orf.at/news.xml';
 
   try {
-    const res = await fetch(url);              // RSS abrufen
+    const res = await fetch(url);
     const data = await res.json();
-
     if (data.items && data.items.length > 0) {
-      newsList = data.items.map(item => item.title);     // Nur die Titel extrahieren
-      currentText = newsList[0];            // Alle Nachrichten  – HIER ÄNDERN
+      newsList = data.items.map(item => item.title);
+      currentText = newsList[0];
     } else {
-      allText = "Keine Nachrichten gefunden.";
+      newsList = ["Keine Nachrichten gefunden."];
+      currentText = newsList[0];
     }
   } catch (err) {
     console.error("Fehler beim Laden der Nachrichten:", err);
-    allText = "Fehler beim Laden der Nachrichten.";
+    newsList = ["Fehler beim Laden der Nachrichten."];
+    currentText = newsList[0];
   }
 }
 
-// Wenn das Fenster verändert wird, passe die Canvasgröße an
+// Fenstergröße anpassen
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
