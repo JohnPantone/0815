@@ -21,13 +21,14 @@ function setup() {
 function draw() {
   background(0);
 
-  let x = 20;
+
   let y = height / 2;
+  let textWidthNow = textWidth(typedText);
+  let x = (width - textWidthNow) / 2;
   text(typedText, x, y);
 
-  if (cursorVisible && state === "typing") {
-    let tw = textWidth(typedText);
-    text("▌", x + tw, y);
+
+
   }
 
   frameCounter++;
