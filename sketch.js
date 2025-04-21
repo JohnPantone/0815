@@ -3,7 +3,7 @@
 // -----------------------------
 const COLS = 40;
 const ROWS = 25;
-const CANVAS_WIDTH = 800;
+const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 600;
 
 let CHAR_SIZE;
